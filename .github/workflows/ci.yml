@@ -1,0 +1,68 @@
+# CI gate for openclaw-plugin-artemis.
+# Runs on every PR and on pushes to main. Reproduce locally before editing:
+#   nvm use 24 && npm ci && npm run build && npm test
+# Pins: node 24, checkout@v4 SHA, setup-node@v4 SHA (verify SHAs against tags before bumping).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install pinned deps
+        run: npm ci
+      - name: Build (tsc)
+        run: npm run build
+      - name: Test (vitest)
+        run: npm test
+
+  repo-hygiene:
+    name: Repo hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Validate workflow YAML
+        run: |
+          python3 - <<'PY'
+          import glob, yaml
+          files = glob.glob('.github/workflows/*.y*ml')
+          assert files, 'no workflow files found'
+          for f in files:
+              yaml.safe_load(open(f, encoding='utf-8'))
+              print(f'ok: {f}')
+          PY
+      # No agent/LLM/system/bootstrap prompt text may be committed here.
+      - name: Prompt-leak gate
+        run: |
+          if git grep -iE 'system[ -]?prompt|bootstrap[ -]?prompt|BEGIN_OPENCLAW|you are an? (AI|agent|assistant)' -- .; then
+            echo '::error::Agent/system prompt text found — scrub before merge.'
+            exit 1
+          else
+            echo 'clean: no prompt text'
+          fi
+      - name: No trailing whitespace in sources
+        run: |
+          if git grep -nE '[[:blank:]]+$' -- src test; then
+            echo '::error::Trailing whitespace in sources.'
+            exit 1
+          else
+            echo 'clean: no trailing whitespace'
+          fi
