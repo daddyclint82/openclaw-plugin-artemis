@@ -1,0 +1,33 @@
+{
+  "name": "openclaw-plugin-artemis",
+  "version": "0.1.1",
+  "type": "module",
+  "description": "Artemis research tools for OpenClaw: quick sourced Brave lookups and deep cited research via a supervised, long-lived Artemis MCP child.",
+  "files": ["dist", "openclaw.plugin.json", "README.md", "OPERATOR.md", "patches"],
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:live": "ARTEMIS_LIVE_SMOKE=1 vitest run test/live-smoke.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "typebox": "^1.1.38"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.9.4"
+  },
+  "devDependencies": {
+    "openclaw": ">=2026.9.4",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@types/node": "^24.0.0"
+  },
+  "openclaw": {
+    "extensions": ["./dist/index.js"],
+    "compat": {
+      "pluginApi": ">=2026.9.4",
+      "minGatewayVersion": "2026.9.4"
+    }
+  }
+}

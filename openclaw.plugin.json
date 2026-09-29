@@ -1,0 +1,47 @@
+{
+  "id": "artemis",
+  "name": "Artemis Research",
+  "description": "Quick sourced Brave lookups and deep cited multi-engine research via a supervised, long-lived Artemis MCP child.",
+  "version": "0.1.1",
+  "categories": ["tools"],
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": ["artemis_research", "artemis_brave_search", "artemis_status"]
+  },
+  "toolMetadata": {
+    "artemis_research": {
+      "optional": false
+    },
+    "artemis_brave_search": {
+      "optional": false
+    },
+    "artemis_status": {
+      "optional": false
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "pythonPath": { "type": "string", "description": "Absolute path to the Python interpreter that runs the Artemis MCP server." },
+      "serverPath": { "type": "string", "description": "Absolute path to the Artemis MCP server script (server.py)." },
+      "artemisPath": { "type": "string", "description": "Value for ARTEMIS_PATH (the artemis package root)." },
+      "ollamaBaseUrl": { "type": "string", "description": "LLM bridge URL passed to the child as OLLAMA_BASE_URL (not a credential)." },
+      "checkpointDb": { "type": "string", "description": "SQLite checkpoint store for this gateway's research runs (isolated from OpenCode's)." },
+      "eagerStart": { "type": "boolean", "description": "Start the child at plugin load instead of lazily on first use." },
+      "readinessTimeoutMs": { "type": "number", "minimum": 1000 },
+      "researchTimeoutMs": { "type": "number", "minimum": 1000 },
+      "braveTimeoutMs": { "type": "number", "minimum": 1000 },
+      "queueMaxDepth": { "type": "integer", "minimum": 0 },
+      "queueTimeoutMs": { "type": "number", "minimum": 1000 },
+      "braveConcurrency": { "type": "integer", "minimum": 1 },
+      "pingIntervalMs": { "type": "number", "minimum": 100 },
+      "pingTimeoutMs": { "type": "number", "minimum": 100 },
+      "maxRestarts": { "type": "integer", "minimum": 1 },
+      "restartWindowMs": { "type": "number", "minimum": 1000 },
+      "stableResetMs": { "type": "number", "minimum": 1000 }
+    }
+  }
+}

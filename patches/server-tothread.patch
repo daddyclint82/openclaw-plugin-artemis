@@ -1,0 +1,23 @@
+--- a/server.py
++++ b/server.py
+@@ -207,15 +207,15 @@
+ 
+     try:
+         if name == "artemis_searxng_search":
+-            text = _invoke(artemis_tools.searxng_search, query=args["query"], num_results=int(args.get("num_results", 8)))
++            text = await asyncio.to_thread(_invoke, artemis_tools.searxng_search, query=args["query"], num_results=int(args.get("num_results", 8)))
+         elif name == "artemis_brave_search":
+-            text = _invoke(artemis_tools.brave_search, query=args["query"], num_results=int(args.get("num_results", 8)))
++            text = await asyncio.to_thread(_invoke, artemis_tools.brave_search, query=args["query"], num_results=int(args.get("num_results", 8)))
+         elif name == "artemis_exa_search":
+-            text = _invoke(artemis_tools.exa_search, query=args["query"], num_results=int(args.get("num_results", 5)))
++            text = await asyncio.to_thread(_invoke, artemis_tools.exa_search, query=args["query"], num_results=int(args.get("num_results", 5)))
+         elif name == "artemis_firecrawl_scrape":
+-            text = _invoke(artemis_tools.firecrawl_scrape, url=args["url"])
++            text = await asyncio.to_thread(_invoke, artemis_tools.firecrawl_scrape, url=args["url"])
+         elif name == "artemis_firecrawl_search":
+-            text = _invoke(artemis_tools.firecrawl_search, query=args["query"], limit=int(args.get("limit", 4)))
++            text = await asyncio.to_thread(_invoke, artemis_tools.firecrawl_search, query=args["query"], limit=int(args.get("limit", 4)))
+         elif name == "artemis_research":
+             question = args["question"]
+             thread_id = args.get("thread_id")
