@@ -50,9 +50,10 @@ jobs:
               print(f'ok: {f}')
           PY
       # No agent/LLM/system/bootstrap prompt text may be committed here.
+      # .github/ is excluded: the gate's own pattern/message live there.
       - name: Prompt-leak gate
         run: |
-          if git grep -iE 'system[ -]?prompt|bootstrap[ -]?prompt|BEGIN_OPENCLAW|you are an? (AI|agent|assistant)' -- .; then
+          if git grep -iE 'system[ -]?prompt|bootstrap[ -]?prompt|BEGIN_OPENCLAW|you are an? (AI|agent|assistant)' -- . ':(exclude).github'; then
             echo '::error::Agent/system prompt text found — scrub before merge.'
             exit 1
           else
